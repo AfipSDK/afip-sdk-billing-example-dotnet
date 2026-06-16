@@ -6,7 +6,11 @@ using AfipSDK.Afip.Net;
 LoadDotEnv();
 CheckEnvs();
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    Args = args,
+    WebRootPath = "public"
+});
 builder.WebHost.UseUrls("http://localhost:4719");
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
