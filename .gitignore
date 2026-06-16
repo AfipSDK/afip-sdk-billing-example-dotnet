@@ -1,0 +1,8 @@
+bin/
+obj/
+.vs/
+.vscode/
+.env
+afip-keys/
+*.user
+*.suo
