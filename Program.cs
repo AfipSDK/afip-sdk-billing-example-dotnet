@@ -107,7 +107,7 @@ static CreatePDFRequest CreatePdfRequest(
     string cae,
     string caeVencimiento)
 {
-    var issuerCuit = long.TryParse(cuit, CultureInfo.InvariantCulture, out var parsedCuit)
+    object issuerCuit = long.TryParse(cuit, CultureInfo.InvariantCulture, out var parsedCuit)
         ? parsedCuit
         : cuit;
 
