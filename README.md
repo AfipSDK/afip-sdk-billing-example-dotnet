@@ -22,12 +22,6 @@ Genera **Facturas B** a través de los web services de AFIP y devuelve un PDF de
 - **[Certificado y clave privada de AFIP](https://afipsdk.com/blog/como-obtener-certificado-para-web-services-arca/)** (archivos `.crt` y `.key`)
 Si se usa el cuit `20409378472`, el certificado y key no son necesarios.
 
-## Instalación
-
-```bash
-dotnet restore
-```
-
 ## Configuración
 
 Copiar el archivo de ejemplo y completar las variables:
@@ -62,7 +56,7 @@ AFIP_PRODUCTION=false
 dotnet run
 ```
 
-El servidor queda escuchando en `http://localhost:4719`.
+`dotnet run` restaura las dependencias si hace falta y levanta el servidor en `http://localhost:4719`.
 
 ### Endpoint
 
