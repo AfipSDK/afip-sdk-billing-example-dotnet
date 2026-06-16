@@ -1,14 +1,14 @@
 # Afip SDK - Ejemplo de Facturación Electrónica
 
 Ejemplo de facturación electrónica con [Afip SDK](https://afipsdk.com/) usando .NET y ASP.NET Core.
-Genera **Facturas B** a través de los web services de AFIP y devuelve un PDF de la factura generada.
+Genera **Facturas B** a través de los web services de AFIP usando el paquete NuGet oficial de AfipSDK y devuelve un PDF de la factura generada.
 
 <img width="1283" height="840" alt="image" src="https://github.com/user-attachments/assets/4ccc86be-1a54-4bd2-8f20-36ee24b5b0bc" />
 
 ## Qué hace
 
 - Expone un endpoint `POST /bill` que recibe los datos de una factura.
-- Crea un comprobante electrónico (Factura B) en AFIP usando el servicio de facturación electrónica.
+- Crea un comprobante electrónico (Factura B) en AFIP usando el paquete NuGet [`Afip.Net`](https://www.nuget.org/packages/Afip.Net).
 - Genera un PDF de la factura usando templates de Afip SDK (`template: { name, params }`).
 - Incluye un frontend mínimo con un botón para generar una factura de prueba y descargar el PDF.
 
@@ -56,7 +56,7 @@ AFIP_PRODUCTION=false
 dotnet run
 ```
 
-`dotnet run` restaura las dependencias si hace falta y levanta el servidor en `http://localhost:4719`.
+`dotnet run` restaura el paquete NuGet `Afip.Net` si hace falta y levanta el servidor en `http://localhost:4719`.
 
 ### Endpoint
 
@@ -94,5 +94,6 @@ La respuesta incluye la URL del PDF generado.
 ## Tecnologías
 
 - [ASP.NET Core](https://learn.microsoft.com/aspnet/core) - Servidor HTTP
-- [Afip SDK API](https://docs.afipsdk.com/integracion/dotnet) - Autorización, CAE y PDF con templates
+- [Afip.Net](https://www.nuget.org/packages/Afip.Net) - Librería .NET de AfipSDK para web services de AFIP
+- [Afip SDK .NET](https://docs.afipsdk.com/integracion/dotnet) - Guía de integración para .NET
 - Variables de entorno o archivo `.env` para configuración local
