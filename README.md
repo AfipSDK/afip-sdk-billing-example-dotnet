@@ -1,14 +1,16 @@
-# Afip SDK - Ejemplo de Facturacion Electronica
+# Afip SDK - Ejemplo de Facturación Electrónica
 
-Ejemplo de facturacion electronica con [Afip SDK](https://afipsdk.com/) usando .NET y ASP.NET Core.
-Genera **Facturas B** a traves de los web services de AFIP y devuelve un PDF de la factura generada.
+Ejemplo de facturación electrónica con [Afip SDK](https://afipsdk.com/) usando .NET y ASP.NET Core.
+Genera **Facturas B** a través de los web services de AFIP y devuelve un PDF de la factura generada.
 
-## Que hace
+<img width="1283" height="840" alt="image" src="https://github.com/user-attachments/assets/4ccc86be-1a54-4bd2-8f20-36ee24b5b0bc" />
+
+## Qué hace
 
 - Expone un endpoint `POST /bill` que recibe los datos de una factura.
-- Crea un comprobante electronico (Factura B) en AFIP usando el servicio de facturacion electronica.
+- Crea un comprobante electrónico (Factura B) en AFIP usando el servicio de facturación electrónica.
 - Genera un PDF de la factura usando templates de Afip SDK (`template: { name, params }`).
-- Incluye un frontend minimo con un boton para generar una factura de prueba y descargar el PDF.
+- Incluye un frontend mínimo con un botón para generar una factura de prueba y descargar el PDF.
 
 ## Requisitos previos
 
@@ -20,15 +22,19 @@ Genera **Facturas B** a traves de los web services de AFIP y devuelve un PDF de 
 - **[Certificado y clave privada de AFIP](https://afipsdk.com/blog/como-obtener-certificado-para-web-services-arca/)** (archivos `.crt` y `.key`)
 Si se usa el cuit `20409378472`, el certificado y key no son necesarios.
 
-## Instalacion
+## Instalación
 
 ```bash
 dotnet restore
 ```
 
-## Configuracion
+## Configuración
 
-Crear un archivo `.env` en la raiz del proyecto con las siguientes variables:
+Copiar el archivo de ejemplo y completar las variables:
+
+```bash
+cp .env.example .env
+```
 
 ```env
 AFIP_ACCESS_TOKEN=tu_access_token
@@ -37,9 +43,12 @@ AFIP_CUIT=20409378472
 # Agregar estos envs si NO se usa el cuit 20409378472
 AFIP_KEY_PATH=./afip-keys/key.key
 AFIP_CERT_PATH=./afip-keys/cert.crt
+
+# Opcional: usar ambiente productivo
+AFIP_PRODUCTION=false
 ```
 
-| Variable | Descripcion |
+| Variable | Descripción |
 |---|---|
 | `AFIP_CUIT` | CUIT del contribuyente emisor |
 | `AFIP_ACCESS_TOKEN` | Access token de Afip SDK |
@@ -72,7 +81,7 @@ El servidor queda escuchando en `http://localhost:4719`.
 }
 ```
 
-| Campo | Tipo | Descripcion |
+| Campo | Tipo | Descripción |
 |---|---|---|
 | `numero_de_documento` | number | Documento del receptor |
 | `tipo_de_documento` | integer | Tipo de documento (80: CUIT, 86: CUIL, 96: DNI, 99: Consumidor Final) |
@@ -81,15 +90,15 @@ El servidor queda escuchando en `http://localhost:4719`.
 | `importe_iva` | number | Importe de IVA (21%) |
 | `punto_de_venta` | integer | Punto de venta |
 | `concepto` | integer | Concepto (1: Productos, 2: Servicios, 3: Productos y Servicios) |
-| `condicion_iva_receptor` | integer | Condicion frente al IVA del receptor |
+| `condicion_iva_receptor` | integer | Condición frente al IVA del receptor |
 | `fecha_servicio_desde` | integer | (Opcional) Fecha inicio del servicio |
 | `fecha_servicio_hasta` | integer | (Opcional) Fecha fin del servicio |
 | `fecha_vencimiento_pago` | integer | (Opcional) Fecha de vencimiento del pago |
 
 La respuesta incluye la URL del PDF generado.
 
-## Tecnologias
+## Tecnologías
 
 - [ASP.NET Core](https://learn.microsoft.com/aspnet/core) - Servidor HTTP
-- [Afip SDK API](https://docs.afipsdk.com/integracion/dotnet) - Autorizacion, CAE y PDF
-- Variables de entorno o archivo `.env` para configuracion local
+- [Afip SDK API](https://docs.afipsdk.com/integracion/dotnet) - Autorización, CAE y PDF con templates
+- Variables de entorno o archivo `.env` para configuración local
