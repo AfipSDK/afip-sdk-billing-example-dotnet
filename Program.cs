@@ -2,8 +2,9 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using AfipSDK.Afip.Net;
+using DotNetEnv;
 
-LoadDotEnv();
+Env.Load();
 CheckEnvs();
 
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
@@ -190,42 +191,6 @@ static void CheckEnvs()
     {
         Console.Error.WriteLine("ERROR: Falta configurar variables de ambiente revise el README para mas informacion.");
         Environment.Exit(1);
-    }
-}
-
-static void LoadDotEnv()
-{
-    var path = Path.Combine(AppContext.BaseDirectory, ".env");
-    if (!File.Exists(path))
-    {
-        path = Path.Combine(Directory.GetCurrentDirectory(), ".env");
-    }
-
-    if (!File.Exists(path))
-    {
-        return;
-    }
-
-    foreach (var rawLine in File.ReadAllLines(path))
-    {
-        var line = rawLine.Trim();
-        if (line.Length == 0 || line.StartsWith('#'))
-        {
-            continue;
-        }
-
-        var separatorIndex = line.IndexOf('=');
-        if (separatorIndex <= 0)
-        {
-            continue;
-        }
-
-        var key = line[..separatorIndex].Trim();
-        var value = line[(separatorIndex + 1)..].Trim().Trim('"');
-        if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable(key)))
-        {
-            Environment.SetEnvironmentVariable(key, value);
-        }
     }
 }
 
