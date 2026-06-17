@@ -35,7 +35,10 @@ app.MapPost("/bill", async (BillRequest request, Afip afip) =>
 
         var numeroDeFactura = lastVoucher + 1;
         var importeTotal = request.ImporteGravado + request.ImporteIva + request.ImporteExentoIva;
-        var fecha = Math.Max(GetDictionaryInt(voucherInfo, "CbteFch") ?? 0, DateHelpers.GetTodayAsNumber());
+        var fechaUltimoComprobante = voucherInfo is null
+            ? 0
+            : int.Parse(voucherInfo["CbteFch"]?.ToString() ?? "0", CultureInfo.InvariantCulture);
+        var fecha = Math.Max(fechaUltimoComprobante, DateHelpers.GetTodayAsNumber());
 
         var voucherData = new Dictionary<string, object?>
         {
@@ -72,8 +75,8 @@ app.MapPost("/bill", async (BillRequest request, Afip afip) =>
         };
 
         var billResponse = await afip.ElectronicBilling.CreateVoucherAsync(voucherData);
-        var cae = GetDictionaryString(billResponse, "CAE") ?? string.Empty;
-        var caeVencimiento = GetDictionaryString(billResponse, "CAEFchVto") ?? string.Empty;
+        var cae = billResponse["CAE"]?.ToString() ?? string.Empty;
+        var caeVencimiento = billResponse["CAEFchVto"]?.ToString() ?? string.Empty;
 
         var pdfResponse = await afip.ElectronicBilling.CreatePDFAsync(CreatePdfRequest(
             afip.Options.CUIT ?? string.Empty,
@@ -85,7 +88,7 @@ app.MapPost("/bill", async (BillRequest request, Afip afip) =>
             caeVencimiento
         ));
 
-        return Results.Json(new PdfResponse(pdfResponse.File, pdfResponse.FileName), JsonOptions.Default);
+        return Results.Json(pdfResponse, JsonOptions.Default);
     }
     catch (AfipWebServiceException ex)
     {
@@ -194,41 +197,6 @@ static void CheckEnvs()
     }
 }
 
-static int? GetDictionaryInt(Dictionary<string, object?>? data, string key)
-{
-    if (data is null || !data.TryGetValue(key, out var value))
-    {
-        return null;
-    }
-
-    return value switch
-    {
-        int number => number,
-        long number => checked((int)number),
-        decimal number => checked((int)number),
-        JsonElement { ValueKind: JsonValueKind.Number } element => element.GetInt32(),
-        JsonElement { ValueKind: JsonValueKind.String } element when int.TryParse(element.GetString(), out var number) => number,
-        string text when int.TryParse(text, out var number) => number,
-        _ => null
-    };
-}
-
-static string? GetDictionaryString(Dictionary<string, object?> data, string key)
-{
-    if (!data.TryGetValue(key, out var value))
-    {
-        return null;
-    }
-
-    return value switch
-    {
-        string text => text,
-        JsonElement { ValueKind: JsonValueKind.String } element => element.GetString(),
-        JsonElement element => element.ToString(),
-        _ => value?.ToString()
-    };
-}
-
 static class AfipOptionsFactory
 {
     public static AfipOptions FromEnvironment()
@@ -260,11 +228,6 @@ sealed record BillRequest(
     [property: JsonPropertyName("fecha_servicio_desde")] int? FechaServicioDesde,
     [property: JsonPropertyName("fecha_servicio_hasta")] int? FechaServicioHasta,
     [property: JsonPropertyName("fecha_vencimiento_pago")] int? FechaVencimientoPago
-);
-
-sealed record PdfResponse(
-    [property: JsonPropertyName("file")] string File,
-    [property: JsonPropertyName("file_name")] string FileName
 );
 
 static class DateHelpers
