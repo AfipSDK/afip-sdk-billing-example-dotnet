@@ -90,17 +90,16 @@ app.MapPost("/bill", async (BillRequest request, Afip afip) =>
 
         return Results.Json(pdfResponse, JsonOptions.Default);
     }
-    catch (AfipWebServiceException ex)
-    {
-        return Results.Json(new { message = ex.Message }, JsonOptions.Default, statusCode: 400);
-    }
-    catch (HttpRequestException ex)
-    {
-        return Results.Json(new { message = ex.Message }, JsonOptions.Default, statusCode: 400);
-    }
     catch (Exception ex)
     {
-        return Results.Json(new { message = ex.Message }, JsonOptions.Default, statusCode: 500);
+        var statusCode = ex switch
+        {
+            AfipWebServiceException => 400,
+            HttpRequestException => 400,
+            _ => 500
+        };
+
+        return Results.Json(new { message = ex.Message }, JsonOptions.Default, statusCode: statusCode);
     }
 });
 
